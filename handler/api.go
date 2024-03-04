@@ -62,7 +62,7 @@ func ApiNewClientVhost(ctx *gin.Context) {
 		req.Type = string(v1.ProxyTypeHTTP)
 	}
 
-	var vhostId = utils.NewHostName(req.MachineId, req.Type, req.LocalAddr)
+	var vhostId = utils.NewHostName(req.MachineId, req.Type, req.LocalAddr, req.Name)
 	var client model.Client
 	v, ok := model.ClientMap.Load(req.MachineId)
 	if !ok {
