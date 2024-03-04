@@ -8,6 +8,9 @@ import (
 	"github.com/lixiang4u/frp-api/utils"
 	"net"
 	"net/http"
+	"os"
+	"path/filepath"
+	"strings"
 )
 
 func ApiConfig(ctx *gin.Context) {
@@ -27,9 +30,19 @@ func ApiConfig(ctx *gin.Context) {
 }
 
 func ApiNotRoute(ctx *gin.Context) {
+
+	root, _ := filepath.Abs(filepath.Join("static"))
+	tmpFile, _ := filepath.Abs(filepath.Join("static", ctx.Request.RequestURI))
+	_, err := os.Stat(tmpFile)
+	if err == nil && strings.HasPrefix(tmpFile, root) {
+		ctx.File(tmpFile)
+		return
+	}
+
 	ctx.JSON(http.StatusOK, gin.H{
 		"code": 404,
 		"msg":  "请求地址错误",
+		"uri":  ctx.Request.RequestURI,
 	})
 }
 
