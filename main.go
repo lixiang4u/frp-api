@@ -43,7 +43,7 @@ func httpServer() {
 
 	r.NoRoute(handler.ApiNotRoute)
 
-	_ = r.Run(fmt.Sprintf(":%d", utils.IWantUseHttpPort()))
+	_ = r.Run(fmt.Sprintf(":%d", utils.IWantUseHttpPort(7700)))
 }
 
 func runFrpServer() {
