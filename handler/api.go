@@ -80,16 +80,22 @@ func ApiNewClientVhost(ctx *gin.Context) {
 		})
 		return
 	}
-	if _, ok := client.Vhosts[vhostId]; !ok {
+	v2, ok := client.Vhosts[vhostId]
+	if !ok {
 		client.Vhosts[vhostId] = model.Vhost{
 			Id:           vhostId,
 			Type:         string(v1.ProxyTypeHTTP),
-			Name:         fmt.Sprintf("vhost-%s", vhostId),
+			Name:         req.Name,
 			CustomDomain: fmt.Sprintf("%s.frp.lixiang4u.xyz", vhostId),
 			LocalAddr:    req.LocalAddr,
 			CrtPath:      "",
 			KeyPath:      "",
 		}
+	} else {
+		v2.Type = req.Type
+		v2.LocalAddr = req.LocalAddr
+		v2.Name = req.Name
+		client.Vhosts[vhostId] = v2
 	}
 
 	model.ClientMap.Store(req.MachineId, client)
@@ -118,5 +124,33 @@ func ApiClientVhostList(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{
 		"code":   200,
 		"vhosts": lst,
+	})
+}
+
+func ApiClientVhostRemove(ctx *gin.Context) {
+	var machineId = ctx.Param("machine_id")
+	var vhostId = ctx.Param("vhost_id")
+	if len(machineId) < 16 || len(vhostId) == 0 {
+		ctx.JSON(http.StatusOK, gin.H{
+			"code": 500,
+			"msg":  "参数错误",
+		})
+		return
+	}
+
+	v, ok := model.ClientMap.Load(machineId)
+	if !ok {
+		ctx.JSON(http.StatusOK, gin.H{
+			"code": 500,
+			"msg":  "数据不存在",
+		})
+		return
+	}
+	var client = v.(model.Client)
+	delete(client.Vhosts, vhostId)
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"code":   200,
+		"vhosts": client.Vhosts,
 	})
 }

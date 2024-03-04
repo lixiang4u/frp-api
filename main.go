@@ -39,6 +39,7 @@ func httpServer() {
 	r.GET("/api/config", handler.ApiConfig)
 	r.POST("/api/vhost", handler.ApiNewClientVhost)
 	r.GET("/api/vhosts", handler.ApiClientVhostList)
+	r.DELETE("/api/vhost/:machine_id/:vhost_id", handler.ApiClientVhostRemove)
 
 	r.NoRoute(handler.ApiNotRoute)
 
