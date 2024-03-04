@@ -3,6 +3,7 @@ package model
 import (
 	"github.com/spf13/viper"
 	"log"
+	"os"
 )
 
 var appConfig AppConfig
@@ -12,6 +13,7 @@ func init() {
 	viper.SetConfigFile("frps.toml")
 	if e := viper.ReadInConfig(); e != nil {
 		log.Println("[configError]", e.Error())
+		os.Exit(1)
 	}
 	appConfig.BindPort = viper.GetInt("bindPort")
 	appConfig.VhostHTTPPort = viper.GetInt("vhostHTTPPort")
