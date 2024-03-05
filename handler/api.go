@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/lixiang4u/frp-api/model"
 	"github.com/lixiang4u/frp-api/utils"
+	"log"
 	"net"
 	"net/http"
 	"os"
@@ -178,5 +179,16 @@ func ApiClientVhostRemove(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{
 		"code":   200,
 		"vhosts": client.Vhosts,
+	})
+}
+
+func ApiDebugVhostList(ctx *gin.Context) {
+	model.ClientMap.Range(func(key, value any) bool {
+		log.Println("[vhost]", key, utils.ToJsonString(value))
+		return true
+	})
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"code": 200,
 	})
 }
