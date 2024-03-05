@@ -4,11 +4,13 @@ import (
 	"github.com/spf13/viper"
 	"log"
 	"os"
+	"strings"
 )
 
 var appConfig AppConfig
 var AppSecret = "frp-api-xxx"
 var AppServerPort int
+var AppServerPrefix string
 
 func init() {
 	viper.SetConfigFile("frps.toml")
@@ -26,6 +28,11 @@ func init() {
 		KeyFile:  viper.GetString("client_default_tls.keyFile"),
 	}
 	AppServerPort = viper.GetInt("server_port")
+	AppServerPrefix = viper.GetString("server_domain_prefix")
+	if !strings.Contains(AppServerPrefix, ".") {
+		log.Println("[configError] server_domain_prefix error")
+		os.Exit(1)
+	}
 }
 
 type ClientDefaultTls struct {

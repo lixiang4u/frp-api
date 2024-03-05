@@ -105,9 +105,9 @@ func ApiNewClientVhost(ctx *gin.Context) {
 	if !ok {
 		var tmpVhost = model.Vhost{
 			Id:           vhostId,
-			Type:         string(v1.ProxyTypeHTTP),
+			Type:         req.Type,
 			Name:         req.Name,
-			CustomDomain: fmt.Sprintf("%s.frp.lixiang4u.xyz", vhostId),
+			CustomDomain: fmt.Sprintf("%s.%s", vhostId, model.AppServerPrefix),
 			LocalAddr:    req.LocalAddr,
 			CrtPath:      "",
 			KeyPath:      "",
