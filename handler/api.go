@@ -74,6 +74,14 @@ func ApiNewClientVhost(ctx *gin.Context) {
 	if len(req.Type) == 0 {
 		req.Type = string(v1.ProxyTypeHTTP)
 	}
+	var appConfig = model.GetAppConfig()
+	if req.Type == string(v1.ProxyTypeHTTPS) && utils.FileExists(appConfig.TLS.CertFile, appConfig.TLS.KeyFile) == false {
+		ctx.JSON(http.StatusOK, gin.H{
+			"code": 500,
+			"msg":  "系统没有配置默认证书",
+		})
+		return
+	}
 
 	var vhostId = utils.NewHostName(req.MachineId, req.Type, req.LocalAddr, req.Name)
 	var client model.Client
@@ -95,7 +103,7 @@ func ApiNewClientVhost(ctx *gin.Context) {
 	}
 	v2, ok := client.Vhosts[vhostId]
 	if !ok {
-		client.Vhosts[vhostId] = model.Vhost{
+		var tmpVhost = model.Vhost{
 			Id:           vhostId,
 			Type:         string(v1.ProxyTypeHTTP),
 			Name:         req.Name,
@@ -104,6 +112,11 @@ func ApiNewClientVhost(ctx *gin.Context) {
 			CrtPath:      "",
 			KeyPath:      "",
 		}
+		if req.Type == string(v1.ProxyTypeHTTPS) {
+			tmpVhost.CrtPath = appConfig.TLS.CertFile
+			tmpVhost.KeyPath = appConfig.TLS.KeyFile
+		}
+		client.Vhosts[vhostId] = tmpVhost
 	} else {
 		v2.Type = req.Type
 		v2.LocalAddr = req.LocalAddr
