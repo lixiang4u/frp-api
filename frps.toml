@@ -1,0 +1,12 @@
+# frps.toml
+bindPort = 7000
+vhostHTTPPort = 80
+vhostHTTPSPort = 443
+
+# 服务器接口域名的端口（客户端web连接/不是frp端口）
+server_port = 7200
+
+# 服务器申请（泛域名证书）给客户端用的默认证书（全局共用/不安全）
+client_default_tls.force = true
+client_default_tls.certFile = "/etc/letsencrypt/live/frp.lixiang4u.xyz/fullchain.pem"
+client_default_tls.keyFile = "/etc/letsencrypt/live/frp.lixiang4u.xyz/privkey.pem"

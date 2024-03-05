@@ -8,6 +8,7 @@ import (
 
 var appConfig AppConfig
 var AppSecret = "frp-api-xxx"
+var AppServerPort int
 
 func init() {
 	viper.SetConfigFile("frps.toml")
@@ -24,6 +25,7 @@ func init() {
 		CertFile: viper.GetString("client_default_tls.certFile"),
 		KeyFile:  viper.GetString("client_default_tls.keyFile"),
 	}
+	AppServerPort = viper.GetInt("server_port")
 }
 
 type ClientDefaultTls struct {

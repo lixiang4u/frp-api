@@ -11,7 +11,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/lixiang4u/frp-api/handler"
 	"github.com/lixiang4u/frp-api/model"
-	"github.com/lixiang4u/frp-api/utils"
 	"os"
 	"time"
 )
@@ -44,7 +43,7 @@ func httpServer() {
 	//r.Static("/files/", ".")
 	r.NoRoute(handler.ApiNotRoute)
 
-	_ = r.Run(fmt.Sprintf(":%d", utils.IWantUseHttpPort(7700)))
+	_ = r.Run(fmt.Sprintf(":%d", model.AppServerPort))
 }
 
 func runFrpServer() {
