@@ -41,6 +41,7 @@ func httpServer() {
 	r.GET("/api/vhosts", handler.ApiClientVhostList)
 	r.DELETE("/api/vhost/:machine_id/:vhost_id", handler.ApiClientVhostRemove)
 
+	//r.Static("/files/", ".")
 	r.NoRoute(handler.ApiNotRoute)
 
 	_ = r.Run(fmt.Sprintf(":%d", utils.IWantUseHttpPort(7700)))
@@ -60,18 +61,6 @@ func runFrpServer() {
 	if appConfig.VhostHTTPSPort > 0 {
 		cfg.VhostHTTPSPort = appConfig.VhostHTTPSPort
 	}
-
-	cfg.Transport = v1.ServerTransportConfig{TLS: v1.TLSServerConfig{}}
-	if len(appConfig.TLS.KeyFile) > 0 {
-		cfg.Transport.TLS.KeyFile = appConfig.TLS.KeyFile
-	}
-	if len(appConfig.TLS.CertFile) > 0 {
-		cfg.Transport.TLS.CertFile = appConfig.TLS.CertFile
-	}
-	if len(appConfig.TLS.TrustedCaFile) > 0 {
-		cfg.Transport.TLS.TrustedCaFile = appConfig.TLS.TrustedCaFile
-	}
-	cfg.Transport.TLS.Force = appConfig.TLS.Force
 
 	warning, err := validation.ValidateServerConfig(&cfg)
 	if warning != nil {

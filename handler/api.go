@@ -75,7 +75,7 @@ func ApiNewClientVhost(ctx *gin.Context) {
 		req.Type = string(v1.ProxyTypeHTTP)
 	}
 	var appConfig = model.GetAppConfig()
-	if req.Type == string(v1.ProxyTypeHTTPS) && utils.FileExists(appConfig.TLS.CertFile, appConfig.TLS.KeyFile) == false {
+	if req.Type == string(v1.ProxyTypeHTTPS) && utils.FileExists(appConfig.ClientDefaultTls.CertFile, appConfig.ClientDefaultTls.KeyFile) == false {
 		ctx.JSON(http.StatusOK, gin.H{
 			"code": 500,
 			"msg":  "系统没有配置默认证书",
@@ -113,8 +113,8 @@ func ApiNewClientVhost(ctx *gin.Context) {
 			KeyPath:      "",
 		}
 		if req.Type == string(v1.ProxyTypeHTTPS) {
-			tmpVhost.CrtPath = appConfig.TLS.CertFile
-			tmpVhost.KeyPath = appConfig.TLS.KeyFile
+			tmpVhost.CrtPath = string(utils.FileContents(appConfig.ClientDefaultTls.CertFile))
+			tmpVhost.KeyPath = string(utils.FileContents(appConfig.ClientDefaultTls.KeyFile))
 		}
 		client.Vhosts[vhostId] = tmpVhost
 	} else {

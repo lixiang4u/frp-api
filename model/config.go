@@ -1,7 +1,6 @@
 package model
 
 import (
-	v1 "github.com/fatedier/frp/pkg/config/v1"
 	"github.com/spf13/viper"
 	"log"
 	"os"
@@ -20,22 +19,24 @@ func init() {
 	appConfig.VhostHTTPPort = viper.GetInt("vhostHTTPPort")
 	appConfig.VhostHTTPSPort = viper.GetInt("vhostHTTPSPort")
 
-	appConfig.TLS = v1.TLSServerConfig{
-		Force: viper.GetBool("transport.tls.force"),
-		TLSConfig: v1.TLSConfig{
-			CertFile:      viper.GetString("transport.tls.certFile"),
-			KeyFile:       viper.GetString("transport.tls.keyFile"),
-			TrustedCaFile: viper.GetString("transport.tls.trustedCaFile"),
-			ServerName:    viper.GetString("transport.tls.certFile"),
-		},
+	appConfig.ClientDefaultTls = ClientDefaultTls{
+		Force:    viper.GetBool("client_default_tls.force"),
+		CertFile: viper.GetString("client_default_tls.certFile"),
+		KeyFile:  viper.GetString("client_default_tls.keyFile"),
 	}
 }
 
+type ClientDefaultTls struct {
+	Force    bool   `json:"force"`
+	CertFile string `json:"cert_file"`
+	KeyFile  string `json:"key_file"`
+}
+
 type AppConfig struct {
-	BindPort       int                `json:"bindPort"`
-	VhostHTTPPort  int                `json:"vhostHTTPPort"`
-	VhostHTTPSPort int                `json:"vhostHTTPSPort"`
-	TLS            v1.TLSServerConfig `json:"tls"`
+	BindPort         int              `json:"bindPort"`
+	VhostHTTPPort    int              `json:"vhostHTTPPort"`
+	VhostHTTPSPort   int              `json:"vhostHTTPSPort"`
+	ClientDefaultTls ClientDefaultTls `json:"client_default_tls"`
 }
 
 func GetAppConfig() AppConfig {
