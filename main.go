@@ -11,16 +11,23 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/lixiang4u/frp-api/handler"
 	"github.com/lixiang4u/frp-api/model"
+	"log"
 	"os"
+	"os/signal"
+	"syscall"
 	"time"
 )
 
 func main() {
+	go loadSaveClientMap()
 	go runFrpServer()
 	httpServer()
 }
 
 func httpServer() {
+	sig := make(chan os.Signal, 1)
+	signal.Notify(sig, syscall.SIGINT, syscall.SIGKILL)
+
 	r := gin.Default()
 
 	r.Use(cors.New(cors.Config{
@@ -45,7 +52,15 @@ func httpServer() {
 	//r.Static("/files/", ".")
 	r.NoRoute(handler.ApiNotRoute)
 
-	_ = r.Run(fmt.Sprintf(":%d", model.AppServerPort))
+	go func() {
+		_ = r.Run(fmt.Sprintf(":%d", model.AppServerPort))
+	}()
+
+	select {
+	case _sig := <-sig:
+		model.SaveClientMap()
+		log.Println(fmt.Sprintf("[stop] %v", _sig))
+	}
 }
 
 func runFrpServer() {
@@ -83,4 +98,16 @@ func runFrpServer() {
 	svr.Run(context.Background())
 
 	frpLog.Info("frps stop")
+}
+
+func loadSaveClientMap() {
+	model.LoadClientMap()
+	var t = time.NewTicker(time.Hour)
+	for {
+		select {
+		case <-t.C:
+			log.Println("[SaveClientMap]")
+			model.SaveClientMap()
+		}
+	}
 }

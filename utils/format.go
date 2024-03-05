@@ -10,6 +10,11 @@ func ToJsonString(v any) string {
 	return string(buff)
 }
 
+func ToJsonBytes(v any) []byte {
+	buf, _ := json.MarshalIndent(v, "", "\t")
+	return buf
+}
+
 func NewHostName(str ...string) string {
 	return HashString(strings.Join(str, ","))[:6]
 }

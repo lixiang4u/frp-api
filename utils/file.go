@@ -4,7 +4,9 @@ import (
 	"crypto/md5"
 	"encoding/hex"
 	"io"
+	"io/fs"
 	"os"
+	"path/filepath"
 )
 
 func FileExists(files ...string) bool {
@@ -48,4 +50,10 @@ func FileContents(filename string) []byte {
 		return make([]byte, 0)
 	}
 	return buf
+}
+
+func AppFilePathMake(elem ...string) string {
+	var tmpFile = filepath.Join(elem...)
+	_ = os.MkdirAll(filepath.Dir(tmpFile), fs.ModePerm)
+	return tmpFile
 }
