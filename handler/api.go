@@ -95,7 +95,7 @@ func ApiNewClientVhost(ctx *gin.Context) {
 	} else {
 		client = v.(model.Client)
 	}
-	if len(client.Vhosts) > 5 {
+	if len(client.Vhosts) >= 10 {
 		ctx.JSON(http.StatusOK, gin.H{
 			"code": 500,
 			"msg":  "虚拟主机创建太多啦",
