@@ -42,15 +42,14 @@ func httpServer() {
 		MaxAge: 12 * time.Hour,
 	}))
 
-	r.GET("/api/config", handler.ApiConfig)
-	r.POST("/api/vhost", handler.ApiNewClientVhost)
-	r.GET("/api/vhosts", handler.ApiClientVhostList)
-	r.DELETE("/api/vhost/:machine_id/:vhost_id", handler.ApiClientVhostRemove)
+	r.GET("/api/config", handler.ApiRecover(handler.ApiConfig))
+	r.POST("/api/vhost", handler.ApiRecover(handler.ApiNewClientVhost))
+	r.GET("/api/vhosts", handler.ApiRecover(handler.ApiClientVhostList))
+	r.DELETE("/api/vhost/:machine_id/:vhost_id", handler.ApiRecover(handler.ApiClientVhostRemove))
 
-	r.POST("/api/debug/vhosts", handler.ApiDebugVhostList)
+	r.POST("/api/debug/vhosts", handler.ApiRecover(handler.ApiDebugVhostList))
 
-	//r.Static("/files/", ".")
-	r.NoRoute(handler.ApiNotRoute)
+	r.NoRoute(handler.ApiRecover(handler.ApiNotRoute))
 
 	go func() {
 		_ = r.Run(fmt.Sprintf(":%d", model.AppServerPort))

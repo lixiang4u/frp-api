@@ -15,6 +15,17 @@ import (
 	"strings"
 )
 
+func ApiRecover(h gin.HandlerFunc) gin.HandlerFunc {
+	defer func() {
+		if err := recover(); err != nil {
+			log.Println("[recover]", err)
+		}
+	}()
+	return func(ctx *gin.Context) {
+		h(ctx)
+	}
+}
+
 func ApiConfig(ctx *gin.Context) {
 	var appConfig = model.GetAppConfig()
 
@@ -52,6 +63,7 @@ func ApiNotRoute(ctx *gin.Context) {
 
 func ApiNewClientVhost(ctx *gin.Context) {
 	type Req struct {
+		Id        string `json:"id" form:"id"`
 		Type      string `json:"type" form:"type"`
 		MachineId string `json:"machine_id" form:"machine_id"`
 		LocalAddr string `json:"local_addr" form:"local_addr"`
@@ -97,6 +109,10 @@ func ApiNewClientVhost(ctx *gin.Context) {
 		}
 	} else {
 		client = v.(model.Client)
+		// 如果已经存在该vhost，则修改
+		if _, ok = client.Vhosts[req.Id]; ok {
+			vhostId = req.Id
+		}
 	}
 	if len(client.Vhosts) >= 10 {
 		ctx.JSON(http.StatusOK, gin.H{
