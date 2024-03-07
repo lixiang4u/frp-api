@@ -21,6 +21,7 @@ func init() {
 	appConfig.BindPort = viper.GetInt("bindPort")
 	appConfig.VhostHTTPPort = viper.GetInt("vhostHTTPPort")
 	appConfig.VhostHTTPSPort = viper.GetInt("vhostHTTPSPort")
+	appConfig.TcpMuxHTTPConnectPort = viper.GetInt("tcpmuxHTTPConnectPort")
 
 	appConfig.ClientDefaultTls = ClientDefaultTls{
 		Force:    viper.GetBool("client_default_tls.force"),
@@ -42,10 +43,11 @@ type ClientDefaultTls struct {
 }
 
 type AppConfig struct {
-	BindPort         int              `json:"bindPort"`
-	VhostHTTPPort    int              `json:"vhostHTTPPort"`
-	VhostHTTPSPort   int              `json:"vhostHTTPSPort"`
-	ClientDefaultTls ClientDefaultTls `json:"client_default_tls"`
+	BindPort              int              `json:"bindPort"`
+	VhostHTTPPort         int              `json:"vhostHTTPPort"`
+	VhostHTTPSPort        int              `json:"vhostHTTPSPort"`
+	TcpMuxHTTPConnectPort int              `json:"tcpmuxHTTPConnectPort"`
+	ClientDefaultTls      ClientDefaultTls `json:"client_default_tls"`
 }
 
 func GetAppConfig() AppConfig {

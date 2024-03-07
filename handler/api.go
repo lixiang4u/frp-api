@@ -34,10 +34,11 @@ func ApiConfig(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{
 		"code": 200,
 		"config": gin.H{
-			"bind_port":        appConfig.BindPort,
-			"vhost_http_port":  appConfig.VhostHTTPPort,
-			"vhost_https_port": appConfig.VhostHTTPSPort,
-			"host":             host,
+			"bind_port":                 appConfig.BindPort,
+			"vhost_http_port":           appConfig.VhostHTTPPort,
+			"vhost_https_port":          appConfig.VhostHTTPSPort,
+			"tcp_mux_http_connect_port": appConfig.TcpMuxHTTPConnectPort,
+			"host":                      host,
 		},
 	})
 }

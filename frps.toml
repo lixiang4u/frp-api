@@ -2,6 +2,7 @@
 bindPort = 7000
 vhostHTTPPort = 80
 vhostHTTPSPort = 443
+tcpmuxHTTPConnectPort = 7022
 
 
 # 服务器接口域名的端口（客户端web连接/不是frp端口）
