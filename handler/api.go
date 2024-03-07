@@ -63,11 +63,12 @@ func ApiNotRoute(ctx *gin.Context) {
 
 func ApiNewClientVhost(ctx *gin.Context) {
 	type Req struct {
-		Id        string `json:"id" form:"id"`
-		Type      string `json:"type" form:"type"`
-		MachineId string `json:"machine_id" form:"machine_id"`
-		LocalAddr string `json:"local_addr" form:"local_addr"`
-		Name      string `json:"name" form:"name"` // 代码名称
+		Id         string `json:"id" form:"id"`
+		Type       string `json:"type" form:"type"`
+		MachineId  string `json:"machine_id" form:"machine_id"`
+		LocalAddr  string `json:"local_addr" form:"local_addr"`
+		RemotePort int    `json:"remote_port" json:"remote_port"`
+		Name       string `json:"name" form:"name"` // 代码名称
 		//LocalPort int    `json:"local_port" form:"local_port"`
 	}
 	var req Req
@@ -129,6 +130,7 @@ func ApiNewClientVhost(ctx *gin.Context) {
 			Name:         req.Name,
 			CustomDomain: fmt.Sprintf("%s.%s", vhostId, model.AppServerPrefix),
 			LocalAddr:    req.LocalAddr,
+			RemotePort:   req.RemotePort,
 			CrtPath:      "",
 			KeyPath:      "",
 		}
@@ -140,6 +142,7 @@ func ApiNewClientVhost(ctx *gin.Context) {
 	} else {
 		v2.Type = req.Type
 		v2.LocalAddr = req.LocalAddr
+		v2.RemotePort = req.RemotePort
 		v2.Name = req.Name
 		client.Vhosts[vhostId] = v2
 	}
