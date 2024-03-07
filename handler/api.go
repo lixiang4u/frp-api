@@ -7,12 +7,18 @@ import (
 	"github.com/lixiang4u/frp-api/model"
 	"github.com/lixiang4u/frp-api/utils"
 	"log"
+	"math/rand/v2"
 	"net"
 	"net/http"
 	"net/url"
 	"os"
 	"path/filepath"
 	"strings"
+)
+
+var (
+	minUsePort = 30000
+	maxUsePort = 60000
 )
 
 func ApiRecover(h gin.HandlerFunc) gin.HandlerFunc {
@@ -39,7 +45,23 @@ func ApiConfig(ctx *gin.Context) {
 			"vhost_https_port":          appConfig.VhostHTTPSPort,
 			"tcp_mux_http_connect_port": appConfig.TcpMuxHTTPConnectPort,
 			"host":                      host,
+			"max_use_port":              maxUsePort,
+			"min_use_port":              minUsePort,
 		},
+	})
+}
+
+func ApiUsePortCheck(ctx *gin.Context) {
+	var p = 0
+	for i := 0; i < 20; i++ {
+		p = rand.IntN(maxUsePort-minUsePort+1) + minUsePort
+		if _, err := utils.IsPortAvailable(p); err == nil {
+			break
+		}
+	}
+	ctx.JSON(http.StatusOK, gin.H{
+		"code": 200,
+		"port": p,
 	})
 }
 
