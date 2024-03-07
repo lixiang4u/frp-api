@@ -111,10 +111,6 @@ func ApiNewClientVhost(ctx *gin.Context) {
 		}
 	} else {
 		client = v.(model.Client)
-		// 如果已经存在该vhost，则修改
-		if _, ok = client.Vhosts[req.Id]; ok {
-			vhostId = req.Id
-		}
 	}
 	if len(client.Vhosts) >= 10 {
 		ctx.JSON(http.StatusOK, gin.H{
@@ -123,9 +119,21 @@ func ApiNewClientVhost(ctx *gin.Context) {
 		})
 		return
 	}
-	v2, ok := client.Vhosts[vhostId]
-	if !ok && req.Type == string(v1.ProxyTypeTCP) {
-		// 新增tcp代理是独占端口的，需要检测可用性
+	// 如果指定了id，则查询是否存在
+	if len(req.Id) > 0 {
+		_, ok = client.Vhosts[req.Id]
+		if !ok {
+			ctx.JSON(http.StatusOK, gin.H{
+				"code": 500,
+				"msg":  fmt.Sprintf("查找vhost失败：%s", req.Id),
+			})
+			return
+		}
+		if ok {
+			vhostId = req.Id
+		}
+	} else if req.Type == string(v1.ProxyTypeTCP) {
+		// 如果是新增tcp代理(独占端口)，需要检测可用性
 		if req.RemotePort <= 0 {
 			ctx.JSON(http.StatusOK, gin.H{
 				"code": 500,
@@ -141,6 +149,7 @@ func ApiNewClientVhost(ctx *gin.Context) {
 			return
 		}
 	}
+	v2, ok := client.Vhosts[vhostId]
 	if !ok {
 		var tmpVhost = model.Vhost{
 			Id:           vhostId,
