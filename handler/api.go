@@ -92,23 +92,6 @@ func ApiNewClientVhost(ctx *gin.Context) {
 	if len(req.Type) == 0 {
 		req.Type = string(v1.ProxyTypeHTTP)
 	}
-	// tcp是独占的端口，需要检测可用性
-	if req.Type == string(v1.ProxyTypeTCP) {
-		if req.RemotePort <= 0 {
-			ctx.JSON(http.StatusOK, gin.H{
-				"code": 500,
-				"msg":  fmt.Sprintf("服务器端口设置错误：%d", req.RemotePort),
-			})
-			return
-		}
-		if _, err = utils.IsPortAvailable(req.RemotePort); err != nil {
-			ctx.JSON(http.StatusOK, gin.H{
-				"code": 500,
-				"msg":  fmt.Sprintf("服务器端口不可用：%s", err.Error()),
-			})
-			return
-		}
-	}
 	var appConfig = model.GetAppConfig()
 	if req.Type == string(v1.ProxyTypeHTTPS) && utils.FileExists(appConfig.ClientDefaultTls.CertFile, appConfig.ClientDefaultTls.KeyFile) == false {
 		ctx.JSON(http.StatusOK, gin.H{
@@ -141,6 +124,23 @@ func ApiNewClientVhost(ctx *gin.Context) {
 		return
 	}
 	v2, ok := client.Vhosts[vhostId]
+	if !ok && req.Type == string(v1.ProxyTypeTCP) {
+		// 新增tcp代理是独占端口的，需要检测可用性
+		if req.RemotePort <= 0 {
+			ctx.JSON(http.StatusOK, gin.H{
+				"code": 500,
+				"msg":  fmt.Sprintf("服务器端口设置错误：%d", req.RemotePort),
+			})
+			return
+		}
+		if _, err = utils.IsPortAvailable(req.RemotePort); err != nil {
+			ctx.JSON(http.StatusOK, gin.H{
+				"code": 500,
+				"msg":  fmt.Sprintf("服务器端口不可用：%s", err.Error()),
+			})
+			return
+		}
+	}
 	if !ok {
 		var tmpVhost = model.Vhost{
 			Id:           vhostId,
@@ -160,7 +160,7 @@ func ApiNewClientVhost(ctx *gin.Context) {
 	} else {
 		v2.Type = req.Type
 		v2.LocalAddr = req.LocalAddr
-		v2.RemotePort = req.RemotePort
+		//v2.RemotePort = req.RemotePort// 不支持修改，防止端口占用没检测
 		v2.Name = req.Name
 		client.Vhosts[vhostId] = v2
 	}
