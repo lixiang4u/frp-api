@@ -24,11 +24,11 @@ func IWantUseHttpPort(port ...int) int {
 }
 
 func IsPortAvailable(port int) (bool, error) {
-	_, err := net.Listen("tcp", fmt.Sprintf(":%d", port))
+	l, err := net.Listen("tcp", fmt.Sprintf(":%d", port))
 	if err != nil {
 		return false, err
 	}
-	//defer func() { _ = l.Close() }()
+	defer func() { _ = l.Close() }()
 	//conn, err := l.Accept()
 	//if err != nil {
 	//	return false, err
