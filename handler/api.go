@@ -92,6 +92,23 @@ func ApiNewClientVhost(ctx *gin.Context) {
 	if len(req.Type) == 0 {
 		req.Type = string(v1.ProxyTypeHTTP)
 	}
+	// tcp是独占的端口，需要检测可用性
+	if req.Type == string(v1.ProxyTypeTCP) {
+		if req.RemotePort <= 0 {
+			ctx.JSON(http.StatusOK, gin.H{
+				"code": 500,
+				"msg":  fmt.Sprintf("服务器端口设置错误：%d", req.RemotePort),
+			})
+			return
+		}
+		if _, err = utils.IsPortAvailable(req.RemotePort); err != nil {
+			ctx.JSON(http.StatusOK, gin.H{
+				"code": 500,
+				"msg":  fmt.Sprintf("服务器端口不可用：%s", err.Error()),
+			})
+			return
+		}
+	}
 	var appConfig = model.GetAppConfig()
 	if req.Type == string(v1.ProxyTypeHTTPS) && utils.FileExists(appConfig.ClientDefaultTls.CertFile, appConfig.ClientDefaultTls.KeyFile) == false {
 		ctx.JSON(http.StatusOK, gin.H{
