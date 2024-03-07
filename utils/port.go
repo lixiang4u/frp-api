@@ -24,17 +24,17 @@ func IWantUseHttpPort(port ...int) int {
 }
 
 func IsPortAvailable(port int) (bool, error) {
-	l, err := net.Listen("tcp", fmt.Sprintf(":%d", port))
+	_, err := net.Listen("tcp", fmt.Sprintf(":%d", port))
 	if err != nil {
 		return false, err
 	}
-	defer func() { _ = l.Close() }()
-	conn, err := l.Accept()
-	if err != nil {
-		return false, err
-	}
-	if err = conn.Close(); err != nil {
-		return false, err
-	}
+	//defer func() { _ = l.Close() }()
+	//conn, err := l.Accept()
+	//if err != nil {
+	//	return false, err
+	//}
+	//if err = conn.Close(); err != nil {
+	//	return false, err
+	//}
 	return true, nil
 }

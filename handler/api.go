@@ -53,15 +53,17 @@ func ApiConfig(ctx *gin.Context) {
 
 func ApiUsePortCheck(ctx *gin.Context) {
 	var p = 0
-	for i := 0; i < 20; i++ {
+	var i int
+	for i = 1; i <= 30; i++ {
 		p = rand.IntN(maxUsePort-minUsePort+1) + minUsePort
 		if _, err := utils.IsPortAvailable(p); err == nil {
 			break
 		}
 	}
 	ctx.JSON(http.StatusOK, gin.H{
-		"code": 200,
-		"port": p,
+		"code":   200,
+		"port":   p,
+		"effort": i,
 	})
 }
 
