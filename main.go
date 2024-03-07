@@ -6,6 +6,7 @@ import (
 	v1 "github.com/fatedier/frp/pkg/config/v1"
 	"github.com/fatedier/frp/pkg/config/v1/validation"
 	frpLog "github.com/fatedier/frp/pkg/util/log"
+	"github.com/fatedier/frp/pkg/util/util"
 	"github.com/fatedier/frp/server"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -67,15 +68,11 @@ func runFrpServer() {
 	cfg.Complete()
 
 	var appConfig = model.GetAppConfig()
-	if appConfig.BindPort > 0 {
-		cfg.BindPort = appConfig.BindPort
-	}
-	if appConfig.VhostHTTPPort > 0 {
-		cfg.VhostHTTPPort = appConfig.VhostHTTPPort
-	}
-	if appConfig.VhostHTTPSPort > 0 {
-		cfg.VhostHTTPSPort = appConfig.VhostHTTPSPort
-	}
+
+	cfg.BindPort = util.EmptyOr(appConfig.BindPort, 0)
+	cfg.VhostHTTPPort = util.EmptyOr(appConfig.VhostHTTPPort, 0)
+	cfg.VhostHTTPSPort = util.EmptyOr(appConfig.VhostHTTPSPort, 0)
+	cfg.TCPMuxHTTPConnectPort = util.EmptyOr(appConfig.TcpMuxHTTPConnectPort, 0)
 
 	warning, err := validation.ValidateServerConfig(&cfg)
 	if warning != nil {
