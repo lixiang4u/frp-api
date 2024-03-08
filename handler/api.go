@@ -94,8 +94,8 @@ func ApiNewClientVhost(ctx *gin.Context) {
 		MachineId  string `json:"machine_id" form:"machine_id"`
 		LocalAddr  string `json:"local_addr" form:"local_addr"`
 		RemotePort int    `json:"remote_port" json:"remote_port"`
-		Name       string `json:"name" form:"name"` // 代码名称
-		Status     bool   `json:"status"`           //true.开启，false.关闭
+		Name       string `json:"name" form:"name"`     // 代码名称
+		Status     bool   `json:"status" form:"status"` //true.开启，false.关闭
 		//LocalPort int    `json:"local_port" form:"local_port"`
 	}
 	var req Req
