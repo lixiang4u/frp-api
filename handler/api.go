@@ -200,12 +200,10 @@ func ApiNewClientVhost(ctx *gin.Context) {
 		//v2.RemotePort = req.RemotePort// 不支持修改，防止端口占用没检测
 		v2.Name = req.Name
 		v2.Status = req.Status
-		if !strings.Contains(v2.CnameDomain, ".") {
-			cnameDomain, ok := model.LoadCustomDomainMap()[v2.CustomDomain]
-			if ok {
-				v2.CnameDomain = cnameDomain
-			}
-		}
+
+		// 重置自定义域名
+		cnameDomain, _ := model.LoadCustomDomainMap()[v2.CustomDomain]
+		v2.CnameDomain = cnameDomain
 
 		client.Vhosts[vhostId] = v2
 	}
