@@ -21,6 +21,8 @@ type Vhost struct {
 	RemotePort   int    `json:"remote_port"`
 	CrtPath      string `json:"crt_path"`
 	KeyPath      string `json:"key_path"`
+	Status       bool   `json:"status"` //true.开启，false.关闭
+	CreatedAt    int64  `json:"created_at"`
 }
 
 type Client struct {

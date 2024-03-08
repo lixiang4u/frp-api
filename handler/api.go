@@ -14,6 +14,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 )
 
 var (
@@ -94,6 +95,7 @@ func ApiNewClientVhost(ctx *gin.Context) {
 		LocalAddr  string `json:"local_addr" form:"local_addr"`
 		RemotePort int    `json:"remote_port" json:"remote_port"`
 		Name       string `json:"name" form:"name"` // 代码名称
+		Status     bool   `json:"status"`           //true.开启，false.关闭
 		//LocalPort int    `json:"local_port" form:"local_port"`
 	}
 	var req Req
@@ -184,6 +186,8 @@ func ApiNewClientVhost(ctx *gin.Context) {
 			RemotePort:   req.RemotePort,
 			CrtPath:      "",
 			KeyPath:      "",
+			Status:       req.Status,
+			CreatedAt:    time.Now().Unix(),
 		}
 		if req.Type == string(v1.ProxyTypeHTTPS) {
 			tmpVhost.CrtPath = string(utils.FileContents(appConfig.ClientDefaultTls.CertFile))
@@ -195,6 +199,8 @@ func ApiNewClientVhost(ctx *gin.Context) {
 		v2.LocalAddr = req.LocalAddr
 		//v2.RemotePort = req.RemotePort// 不支持修改，防止端口占用没检测
 		v2.Name = req.Name
+		v2.Status = req.Status
+
 		client.Vhosts[vhostId] = v2
 	}
 
