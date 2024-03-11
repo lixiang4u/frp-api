@@ -138,7 +138,7 @@ func ApiNewClientVhost(ctx *gin.Context) {
 	} else {
 		client = v.(model.Client)
 	}
-	if len(client.Vhosts) >= 5 {
+	if len(client.Vhosts) >= 5 && len(req.Id) == 0 {
 		ctx.JSON(http.StatusOK, gin.H{
 			"code": 500,
 			"msg":  "代理创建太多啦",
