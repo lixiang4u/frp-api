@@ -74,6 +74,7 @@ func runFrpServer() {
 	cfg.VhostHTTPPort = util.EmptyOr(appConfig.VhostHTTPPort, 0)
 	cfg.VhostHTTPSPort = util.EmptyOr(appConfig.VhostHTTPSPort, 0)
 	cfg.TCPMuxHTTPConnectPort = util.EmptyOr(appConfig.TcpMuxHTTPConnectPort, 0)
+	cfg.Custom404Page = util.EmptyOr(appConfig.Custom404Page, "")
 
 	warning, err := validation.ValidateServerConfig(&cfg)
 	if warning != nil {

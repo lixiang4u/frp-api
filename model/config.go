@@ -22,6 +22,7 @@ func init() {
 	appConfig.VhostHTTPPort = viper.GetInt("vhostHTTPPort")
 	appConfig.VhostHTTPSPort = viper.GetInt("vhostHTTPSPort")
 	appConfig.TcpMuxHTTPConnectPort = viper.GetInt("tcpmuxHTTPConnectPort")
+	appConfig.Custom404Page = viper.GetString("custom404Page")
 
 	appConfig.ClientDefaultTls = ClientDefaultTls{
 		Force:    viper.GetBool("client_default_tls.force"),
@@ -47,6 +48,7 @@ type AppConfig struct {
 	VhostHTTPPort         int              `json:"vhostHTTPPort"`
 	VhostHTTPSPort        int              `json:"vhostHTTPSPort"`
 	TcpMuxHTTPConnectPort int              `json:"tcpmuxHTTPConnectPort"`
+	Custom404Page         string           `json:"custom404Page"`
 	ClientDefaultTls      ClientDefaultTls `json:"client_default_tls"`
 }
 
