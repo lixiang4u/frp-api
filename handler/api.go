@@ -175,6 +175,14 @@ func ApiNewClientVhost(ctx *gin.Context) {
 			return
 		}
 	}
+	if !checkVhostNameUnique(req.Name, vhostId) {
+		ctx.JSON(http.StatusOK, gin.H{
+			"code": 500,
+			"msg":  fmt.Sprintf("代理名称被占用：%s", req.Name),
+		})
+		return
+	}
+
 	v2, ok := client.Vhosts[vhostId]
 	if !ok {
 		var tmpVhost = model.Vhost{
@@ -274,4 +282,18 @@ func ApiDebugVhostList(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{
 		"code": 200,
 	})
+}
+
+func checkVhostNameUnique(name, vhostId string) (unique bool) {
+	unique = true
+	model.ClientMap.Range(func(key, value any) bool {
+		v := value.(model.Client)
+		for _, vhost := range v.Vhosts {
+			if vhost.Name == name && vhostId != vhost.Id {
+				unique = false
+			}
+		}
+		return true
+	})
+	return unique
 }
